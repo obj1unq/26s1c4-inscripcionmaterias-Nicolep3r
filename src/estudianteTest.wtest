@@ -1,0 +1,80 @@
+import estudiante.*
+import materia.*
+import materiasAprobadas.*
+
+describe "test materias" {
+
+    //Materias con requisitos
+    const objetos2 = new Materia(nombreMateria = "Programacion con Objetos 2", 
+                                materiasRequeridas = #{objetos1, matematica1},
+                                cantCupo = 3)
+        
+    const objetos3 = new Materia(nombreMateria = "Programacion con Objetos 3", 
+                                materiasRequeridas = #{objetos2, baseDeDatos},
+                                cantCupo = 40)
+
+    const programacionConcurrente = new Materia(nombreMateria = "Programacion Concurrente", 
+                                materiasRequeridas = #{objetos1, baseDeDatos},
+                                cantCupo = 40)
+
+    const biologia2 = new Materia(nombreMateria = "Biologia 2", 
+                                materiasRequeridas = #{biologia1},
+                                cantCupo = 40)              
+    
+    const objetos1 = new Materia(nombreMateria = "Programacion con Objetos 1", 
+                                materiasRequeridas = #{elementos},
+                                cantCupo = 35)
+  //Materias Sin requisitos
+
+    const matematica1 = new Materia(nombreMateria = "Matematica1", 
+                                    cantCupo = 35)
+
+    const baseDeDatos = new Materia(nombreMateria = "Base de Datos", 
+                                    cantCupo = 45)
+    
+    const biologia1 = new Materia(nombreMateria = "Biologia 1", 
+                                    cantCupo = 20)
+
+    const elementos = new Materia(nombreMateria = "Elementos de Programacion", 
+                                    cantCupo = 50)   
+
+    const quimica = new Materia(nombreMateria = "Quimica", 
+                                    cantCupo = 32) 
+
+
+    //Estudiantes
+
+    const roque = new Estudiante(carrerasInscriptas = #{programacion, medicina},
+                                materiasAprobadas = [elementos, matematica1, objetos1, baseDeDatos, quimica, biologia1])    
+
+    const luisa = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [elementos, matematica1, objetos1])
+
+    const romina = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [elementos, matematica1, objetos1]) 
+
+    const alicia = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [elementos, matematica1, objetos1])    
+
+    const ana = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [elementos])           
+
+    //Carrera
+    const programacion = new Carrera(materias = #{objetos1, objetos2, objetos3, programacionConcurrente, matematica1, baseDeDatos, elementos})
+    const medicina = new Carrera(materias = #{biologia1, biologia2, quimica})
+
+                
+  test "prueba 1" {
+    
+  }
+}
+// Roque tiene aprobadas Elementos de Programación, Matemática 1, Objetos 1, Bases de Datos, Química y Biología 1.
+// Tenemos a: Luisa, Romina y Alicia que aprobaron Elementos de Programación, Objetos 1, y Matemática 1; 
+//Ana que aprobó solamente Elementos de Programación. Todas están cursando Programación.
+// Objetos 2 tiene cupo para 3 estudiantes.
+// Realizar estos tests:
+
+// Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada).
+// Roque puede inscribirse: en Programación, en Objetos 2 y Programación Concurrente; en Medicina, en Biología 2.
+// Si se inscriben, en este orden, Luisa, Romina, Alicia y Roque en Objetos 2, entonces las tres primeras quedan confirmadas, y Roque queda en lista de espera.
+// Si después se da de baja Romina en Objetos 2, entonces Roque pasa a tener la inscripción confirmada en esa materia.
