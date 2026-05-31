@@ -37,13 +37,17 @@ class Estudiante {
 	  	self.inscribirseMateriaSegunCupo(materia)
 		
 	}
+
+	method darDeBaja(materia) {
+	  	materia.darDeBajaAlumno(self)
+	}
 	
 	method inscribirseMateriaSegunCupo(materia) {
 	  if(materia.hayCupo()){
 		materiasInscriptas.add(materia)
 		materia.inscribirAlumno(self)
 	  }else{
-	  materia.agregarListaDeEspera(self)
+	  	materia.agregarEnListaDeEspera(self)
 	  }
 	}
 

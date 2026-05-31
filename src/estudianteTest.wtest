@@ -55,7 +55,9 @@ describe "test materias" {
                                   ])  
 
     const luisa = new Estudiante(carrerasInscriptas = #{programacion},
-                                materiasAprobadas = [elementos, matematica1, objetos1])
+                                materiasAprobadas = [new MateriaAprobada(materia = elementos, nota = 5),
+                                                    new MateriaAprobada(materia = matematica1, nota = 7), 
+                                                    new MateriaAprobada(materia = objetos1, nota = 9)])
 
     const romina = new Estudiante(carrerasInscriptas = #{programacion},
                                 materiasAprobadas = [new MateriaAprobada(materia = elementos, nota = 5),
@@ -80,15 +82,40 @@ describe "test materias" {
 
     assert.equals(#{roque}, objetos2.alumnosInscriptos())
     assert.equals(#{objetos2}, roque.materiasInscriptas())
+     assert.throwsExceptionWithMessage("No cumple los requisitos para la inscripcion",{ roque.inscribirseAMateria(objetos3) }
+  )
+    assert.throwsException({roque.inscribirseAMateria(objetos1)})
   }
-}
-// Roque tiene aprobadas Elementos de Programación, Matemática 1, Objetos 1, Bases de Datos, Química y Biología 1.
-// Tenemos a: Luisa, Romina y Alicia que aprobaron Elementos de Programación, Objetos 1, y Matemática 1; 
-//Ana que aprobó solamente Elementos de Programación. Todas están cursando Programación.
-// Objetos 2 tiene cupo para 3 estudiantes.
-// Realizar estos tests:
 
-// Roque puede inscribirse en Objetos 2, pero no en Objetos 3 (porque le falta Objetos 2) ni en Objetos 1 (porque ya la tiene aprobada).
-// Roque puede inscribirse: en Programación, en Objetos 2 y Programación Concurrente; en Medicina, en Biología 2.
-// Si se inscriben, en este orden, Luisa, Romina, Alicia y Roque en Objetos 2, entonces las tres primeras quedan confirmadas, y Roque queda en lista de espera.
-// Si después se da de baja Romina en Objetos 2, entonces Roque pasa a tener la inscripción confirmada en esa materia.
+  test "test 2 - Roque se inscribe a materias de programacion y medicina" {
+    roque.inscribirseAMateria(objetos2)
+    roque.inscribirseAMateria(programacionConcurrente)
+    roque.inscribirseAMateria(biologia2)
+
+    assert.equals(#{objetos2, programacionConcurrente, biologia2}, roque.materiasInscriptas())
+  }
+
+  test "cupos en objetos2" {
+    luisa.inscribirseAMateria(objetos2)
+    romina.inscribirseAMateria(objetos2)
+    alicia.inscribirseAMateria(objetos2)
+    roque.inscribirseAMateria(objetos2)
+
+    assert.equals(#{luisa,romina,alicia}, objetos2.alumnosInscriptos())
+    assert.equals([roque], objetos2.listaDeEspera())
+
+  }
+
+  test "dar de baja y otorgar cupo a roque" {
+    luisa.inscribirseAMateria(objetos2)
+    romina.inscribirseAMateria(objetos2)
+    alicia.inscribirseAMateria(objetos2)
+    roque.inscribirseAMateria(objetos2)
+    romina.darDeBaja(objetos2)
+
+    assert.equals(#{luisa,roque,alicia}, objetos2.alumnosInscriptos())
+    assert.that(objetos2.listaDeEspera().isEmpty())
+  }
+
+}
+
