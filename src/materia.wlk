@@ -13,13 +13,17 @@
 
 
 
+		method inscribirAlumno(alumno){
+			alumnosInscriptos.add(alumno)
+		}
+
 		method hayCupo() {
 		  return cantCupo > cantInscriptos
 		}
 
-		method aumentarInscriptos() {
-			cantInscriptos += 1
-		}
+		// method aumentarInscriptos() {
+		// 	cantInscriptos += 1
+		// }
 
 		method agregarEnListaDeEspera(alumno) {
 			listaDeEspera.add(alumno)
@@ -36,10 +40,10 @@
 		  if(!listaDeEspera.isEmpty()){
 			const alumno = self.primerAlumnoEnListaDeEspera()
 
-			alumnosInscriptos.add(alumno)
+			self.inscribirAlumno(alumno)
 			listaDeEspera.remove(alumno)
 
-			self.aumentarInscriptos()
+			// self.aumentarInscriptos()
 		  }
 		}
 

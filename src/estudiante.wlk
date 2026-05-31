@@ -3,7 +3,7 @@ import materiasAprobadas.*
 
 class Estudiante {
 	const carrerasInscriptas = #{}
-	const materiasAprobadas = []
+	const materiasAprobadas = #{}
 	const materiasInscriptas = #{}
 
 	method materiasInscriptas() = materiasInscriptas
@@ -18,8 +18,8 @@ class Estudiante {
   	}
 
 	method aprobo(materia) {
-		return materiasAprobadas.any({materiaAprobada => materiaAprobada.materia() == materia})
-	}
+        return materiasAprobadas.any ({mataprob => mataprob.materia() == materia })
+    }
 
 	method promedioNotasAprobadas() {
 	  return materiasAprobadas.average({materia => materia.nota()})
@@ -34,12 +34,22 @@ class Estudiante {
 		if(!self.puedeInscribirse(materia)){
 			self.error("No cumple los requisitos para la inscripcion")
 		}
-	  	materiasInscriptas.add(materia)
+	  	self.inscribirseMateriaSegunCupo(materia)
+		
+	}
+	
+	method inscribirseMateriaSegunCupo(materia) {
+	  if(materia.hayCupo()){
+		materiasInscriptas.add(materia)
+		materia.inscribirAlumno(self)
+	  }else{
+	  materia.agregarListaDeEspera(self)
+	  }
 	}
 
 
 	method puedeInscribirse(materia) {
-	  return self.materiaCorrespondeACarreraCursando(materia) && !self.aprobo(materia) && self.estaInscripto(materia) && self.cumpleCorrelativas(materia)
+	  return self.materiaCorrespondeACarreraCursando(materia) && not self.aprobo(materia) && not self.estaInscripto(materia) && self.cumpleCorrelativas(materia)
 	}
 
 	method materiaCorrespondeACarreraCursando(materia){
@@ -51,15 +61,9 @@ class Estudiante {
 	}
 
 	method cumpleCorrelativas(materia){
-	  return materia.materiasRequeridas().all({correlativa => materiasAprobadas.contains(correlativa)})
+	  return materia.materiasRequeridas().all({correlativa => self.aprobo(correlativa)})
 	}
 
-	method inscribirseMateria(materia) {
-	  if(materia.hayCupo()){
-		materiasInscriptas.add(materia)
-	  }
-	  materia.agregarListaDeEspera(self)
-	}
 
 	method materiasEnListaDeEspera() {
     	return self.materiaDeTodasLasCarrerasInscriptas().filter({ materia => materia.listaDeEspera().contains(self) })
