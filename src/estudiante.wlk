@@ -1,6 +1,9 @@
 import materia.*
 import materiasAprobadas.*
+import requisitos.*
 
+
+/*Crear el objeto requisito y */
 class Estudiante {
 	const carrerasInscriptas = #{}
 	const materiasAprobadas = #{}
@@ -8,18 +11,18 @@ class Estudiante {
 
 	method materiasInscriptas() = materiasInscriptas
 
-
 	method aprobar(materia, nota) {
-	if(self.aprobo(materia)){
+	if(requisitoAproboMateria.cumpleRequisito(self, materia)){
 		self.error("Ya se registro la aprobacion de esta materia")
 	}
 	materiasAprobadas.add(new MateriaAprobada(materia = materia,
 												 nota = nota))
   	}
 
-	method aprobo(materia) {
-        return materiasAprobadas.any ({mataprob => mataprob.materia() == materia })
-    }
+	// method aprobo(materia) {
+    //     return materiasAprobadas.any ({mataprob => mataprob.materia() == materia })
+    // }
+	//Se lo delegue a requisitos, no se que tan bien este. Me gustaria respuesta a esta pregunta :) 
 
 	method promedioNotasAprobadas() {
 	  return materiasAprobadas.average({materia => materia.nota()})
@@ -53,19 +56,22 @@ class Estudiante {
 
 
 	method puedeInscribirse(materia) {
-	  return self.materiaCorrespondeACarreraCursando(materia) && not self.aprobo(materia) && not self.estaInscripto(materia) && self.cumpleCorrelativas(materia)
+	  return requisitoCorrespondeACarreraCursando.cumpleRequisito(self, materia) &&
+	  		not requisitoAproboMateria.cumpleRequisito(self, materia) &&
+			not requisitoYaEstaInscripto.cumpleRequisito(self, materia) &&
+			materia.requisito().cumpleRequisito(self, materia)
 	}
 
-	method materiaCorrespondeACarreraCursando(materia){
-		return self.materiaDeTodasLasCarrerasInscriptas().contains(materia)
-	}
+	// method materiaCorrespondeACarreraCursando(materia){
+	// 	return self.materiaDeTodasLasCarrerasInscriptas().contains(materia)
+	// }
 
-	method estaInscripto(materia){
-	  return materiasInscriptas.contains(materia)
-	}
-
+	// method estaInscripto(materia){
+	//   return materiasInscriptas.contains(materia)
+	// }
+	//Se lo delegue a requisitos, no se que tan bien este. Me gustaria respuesta a esta pregunta :) 
 	method cumpleCorrelativas(materia){
-	  return materia.materiasRequeridas().all({correlativa => self.aprobo(correlativa)})
+	  return materia.materiasRequeridas().all({correlativa => requisitoAproboMateria.cumpleRequisito(self, materia)})
 	}
 
 
@@ -78,9 +84,15 @@ class Estudiante {
 			self.error("No esta inscripto en esta carrera")
     	}
 			return carrera.materias().filter({ materia => self.puedeInscribirse(materia) })
+	}
 
-}
+	method cantCreditosTotales() {
+	  return materiasAprobadas.sum({materiaAprobada => materiaAprobada.materia().cantCreditosQueOtorga()})
+	}
 
+	method cantMateriasAprobadasDeCarrera(carreraAv) {
+	   return materiasAprobadas.count({materiaAp => materiaAp.materia().carrera() == carreraAv})	
+	}
 }
 
 

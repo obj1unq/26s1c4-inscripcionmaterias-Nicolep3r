@@ -1,17 +1,27 @@
 import estudiante.*
 import materia.*
 import materiasAprobadas.*
+import requisitos.*
+import listaDeEspera.*
 
 describe "test materias" {
 
     //Materias con requisitos
     const objetos2 = new Materia(nombreMateria = "Programacion con Objetos 2", 
                                 materiasRequeridas = #{objetos1, matematica1},
-                                cantCupo = 3)
+                                cantCupo = 3,
+                                anioCarrera = 2,
+                                requisito = requisitoNinguno,
+                                carrera = programacion,
+                                estrategiaListaDeEspera = listaPorOrdenDeLlegada)
         
     const objetos3 = new Materia(nombreMateria = "Programacion con Objetos 3", 
                                 materiasRequeridas = #{objetos2, baseDeDatos},
-                                cantCupo = 40)
+                                cantCupo = 40,
+                                anioCarrera = 2,
+                                requisito = requisitoNinguno,
+                                carrera = programacion,
+                                estrategiaListaDeEspera = listaPorOrdenDeLlegada)
 
     const programacionConcurrente = new Materia(nombreMateria = "Programacion Concurrente", 
                                 materiasRequeridas = #{objetos1, baseDeDatos},

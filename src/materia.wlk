@@ -1,12 +1,16 @@
     import estudiante.*
 	class Materia{
+		const property carrera
 		const nombreMateria
 		const property materiasRequeridas = #{}
 		const property cantCupo
 		var cantInscriptos = 0
 		const listaDeEspera = []
 		const property alumnosInscriptos = #{}
-
+		var property cantCreditosQueOtorga = 0
+		const property anioCarrera
+		const property requisito //Objeto requisito
+		const property estrategiaListaDeEspera  //Objeto lista de espera
 
 		method listaDeEspera() = listaDeEspera
 		method nombreMateria() = nombreMateria
@@ -24,7 +28,9 @@
 
 
 		method agregarEnListaDeEspera(alumno) {
-			listaDeEspera.add(alumno)
+			estrategiaListaDeEspera.inscribirEnListaDeEspera(self, alumno) 
+			
+			// listaDeEspera.add(alumno) //	ESTRATEGIA
 		}
 
 		method darDeBajaAlumno(alumno) {
