@@ -1,0 +1,131 @@
+import estudiante.*
+import materia.*
+import materiasAprobadas.*
+import requisitos.*
+import listaDeEspera.*
+
+describe "test materias" {
+
+    //Materias con requisitos
+    const objetos2 = new Materia(nombreMateria = "Programacion con Objetos 2", 
+                                materiasRequeridas = #{objetos1, matematica1},
+                                cantCupo = 3,
+                                anioCarrera = 2,
+                                requisito = requisitoNinguno,
+                                carrera = programacion,
+                                estrategiaListaDeEspera = listaPorOrdenDeLlegada)
+        
+    const objetos3 = new Materia(nombreMateria = "Programacion con Objetos 3", 
+                                materiasRequeridas = #{objetos2, baseDeDatos},
+                                cantCupo = 40,
+                                anioCarrera = 2,
+                                requisito = requisitoNinguno,
+                                carrera = programacion,
+                                estrategiaListaDeEspera = listaPorOrdenDeLlegada)
+
+    const programacionConcurrente = new Materia(nombreMateria = "Programacion Concurrente", 
+                                materiasRequeridas = #{objetos1, baseDeDatos},
+                                cantCupo = 40)
+
+    const biologia2 = new Materia(nombreMateria = "Biologia 2", 
+                                materiasRequeridas = #{biologia1},
+                                cantCupo = 40)              
+    
+    const objetos1 = new Materia(nombreMateria = "Programacion con Objetos 1", 
+                                materiasRequeridas = #{elementos},
+                                cantCupo = 35)
+  //Materias Sin requisitos
+
+    const matematica1 = new Materia(nombreMateria = "Matematica1", 
+                                    cantCupo = 35)
+
+    const baseDeDatos = new Materia(nombreMateria = "Base de Datos", 
+                                    cantCupo = 45)
+    
+    const biologia1 = new Materia(nombreMateria = "Biologia 1", 
+                                    cantCupo = 20)
+
+    const elementos = new Materia(nombreMateria = "Elementos de Programacion", 
+                                    cantCupo = 50)   
+
+    const quimica = new Materia(nombreMateria = "Quimica", 
+                                    cantCupo = 32) 
+
+
+    //Estudiantes
+
+    const roque = new Estudiante(carrerasInscriptas = #{programacion, medicina},
+                                materiasAprobadas = [
+                                            new MateriaAprobada(materia = elementos, nota = 8),
+                                            new MateriaAprobada(materia = matematica1, nota = 7),
+                                            new MateriaAprobada(materia = objetos1, nota = 9),
+                                            new MateriaAprobada(materia = baseDeDatos, nota = 8),
+                                            new MateriaAprobada(materia = quimica, nota = 6),
+                                            new MateriaAprobada(materia = biologia1, nota = 10)
+                                  ])  
+
+    const luisa = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [new MateriaAprobada(materia = elementos, nota = 5),
+                                                    new MateriaAprobada(materia = matematica1, nota = 7), 
+                                                    new MateriaAprobada(materia = objetos1, nota = 9)])
+
+    const romina = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [new MateriaAprobada(materia = elementos, nota = 5),
+                                                    new MateriaAprobada(materia = matematica1, nota = 7), 
+                                                    new MateriaAprobada(materia = objetos1, nota = 9)]) 
+
+    const alicia = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [new MateriaAprobada(materia = elementos, nota = 5),
+                                                    new MateriaAprobada(materia = matematica1, nota = 7),
+                                                    new MateriaAprobada(materia = objetos1, nota = 9)])    
+
+    const ana = new Estudiante(carrerasInscriptas = #{programacion},
+                                materiasAprobadas = [new MateriaAprobada(materia = elementos, nota = 5)])           
+
+    //Carrera
+    const programacion = new Carrera(materias = #{objetos1, objetos2, objetos3, programacionConcurrente, matematica1, baseDeDatos, elementos})
+    const medicina = new Carrera(materias = #{biologia1, biologia2, quimica})
+
+                
+  test "test 1 - Roque se inscribe a Objetos 2" {
+    roque.inscribirseAMateria(objetos2)
+
+    assert.equals(#{roque}, objetos2.alumnosInscriptos())
+    assert.equals(#{objetos2}, roque.materiasInscriptas())
+     assert.throwsExceptionWithMessage("No cumple los requisitos para la inscripcion",{ roque.inscribirseAMateria(objetos3) }
+  )
+    assert.throwsException({roque.inscribirseAMateria(objetos1)})
+  }
+
+  test "test 2 - Roque se inscribe a materias de programacion y medicina" {
+    roque.inscribirseAMateria(objetos2)
+    roque.inscribirseAMateria(programacionConcurrente)
+    roque.inscribirseAMateria(biologia2)
+
+    assert.equals(#{objetos2, programacionConcurrente, biologia2}, roque.materiasInscriptas())
+  }
+
+  test "cupos en objetos2" {
+    luisa.inscribirseAMateria(objetos2)
+    romina.inscribirseAMateria(objetos2)
+    alicia.inscribirseAMateria(objetos2)
+    roque.inscribirseAMateria(objetos2)
+
+    assert.equals(#{luisa,romina,alicia}, objetos2.alumnosInscriptos())
+    assert.equals([roque], objetos2.listaDeEspera())
+
+  }
+
+  test "dar de baja y otorgar cupo a roque" {
+    luisa.inscribirseAMateria(objetos2)
+    romina.inscribirseAMateria(objetos2)
+    alicia.inscribirseAMateria(objetos2)
+    roque.inscribirseAMateria(objetos2)
+    romina.darDeBaja(objetos2)
+
+    assert.equals(#{luisa,roque,alicia}, objetos2.alumnosInscriptos())
+    assert.that(objetos2.listaDeEspera().isEmpty())
+  }
+
+}
+
